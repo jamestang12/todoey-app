@@ -21,8 +21,6 @@ class TodoListViewControl: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-       
-    
 //
 //        let newItem = Item()
 //        newItem.done = true
@@ -37,7 +35,7 @@ class TodoListViewControl: UITableViewController {
 //        newItem3.title = "Destory Demogorgon"
 //        itemArray.append(newItem3)
 //
-       loadItems()
+        loadItems()
       
         
         // Do any additional setup after loading the view.
@@ -124,15 +122,33 @@ class TodoListViewControl: UITableViewController {
         self.tableView.reloadData()
     }
     
-    func loadItems(){
-        let request :NSFetchRequest<Item> = Item.fetchRequest()
+    func loadItems(wiith request: NSFetchRequest<Item> = Item.fetchRequest()){
         do {
             itemArray = try context.fetch(request)
         } catch  {
             print("Error fetching data from context \(error)")
         }
+        
+        tableView.reloadData()
     }
     
+   
+    
+}
+//MARK: - Search bar methods
+extension TodoListViewControl: UISearchBarDelegate{
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        let request : NSFetchRequest<Item> = Item.fetchRequest()
+        
+        request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+        
+        
+        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+        
+        loadItems(wiith: request)
+        
+
+    }
 }
 
 
