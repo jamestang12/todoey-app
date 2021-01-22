@@ -13,6 +13,8 @@ class CategoryViewController: UITableViewController {
     
     var categories = [Category]()
     
+   
+    
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
     override func viewDidLoad() {
@@ -60,6 +62,18 @@ class CategoryViewController: UITableViewController {
         return cell
     }
     
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        performSegue(withIdentifier: "goToItems", sender: self)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let destinationVC = segue.destination as! TodoListViewControl
+        
+       if let indexPath = tableView.indexPathForSelectedRow{
+            destinationVC.selectedCategory = categories[indexPath.row]
+        }
+    }
+  
     
     //MARK: - Data Manipulation Methods
     func saveCategories(){
