@@ -24,6 +24,22 @@ class CategoryViewController: SwipeTableViewController {
         
         tableView.separatorStyle = .none
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+//        guard let navBar = navigationController?.navigationBar else {fatalError("Navigation controller dones not exits.")}
+//        navBar.backgroundColor = UIColor(hexString: "1D9BF6")
+//        navBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor(contrastingBlackOrWhiteColorOn: (HexColor("1D9BF6")!), isFlat: true)]
+        
+        let navBarAppearance = UINavigationBarAppearance()
+        navBarAppearance.configureWithOpaqueBackground()
+        navBarAppearance.backgroundColor = UIColor(hexString: ("1D9BF6"))
+        guard let navBar = navigationController?.navigationBar else {fatalError("Navigation controller dones not exits.")}
+        
+        navBar.scrollEdgeAppearance = navBarAppearance
+        navBar.standardAppearance = navBarAppearance
+    }
+    
+
 
     //MARK: - Add New Categories
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
@@ -59,9 +75,15 @@ class CategoryViewController: SwipeTableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
      
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
-    
-        cell.textLabel?.text = categories?[indexPath.row].name ?? "No Categories Added Yet"
         
+        if let category = categories?[indexPath.row]{
+            guard let categoryColor = UIColor(hexString: category.colour ) else {fatalError()}
+            cell.textLabel?.textColor = ContrastColorOf(categoryColor, returnFlat: true)
+            
+        }
+     
+        cell.textLabel?.text = categories?[indexPath.row].name ?? "No Categories Added Yet"
+       
         cell.backgroundColor = UIColor(hexString: categories?[indexPath.row].colour ?? "1D9BF6")
         
         return cell
@@ -69,6 +91,7 @@ class CategoryViewController: SwipeTableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         performSegue(withIdentifier: "goToItems", sender: self)
+        tableView.deselectRow(at: indexPath, animated: true)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
